@@ -77,7 +77,7 @@ def encode(p, v):
         v = base64.b64encode(v)
     elif e is not None:
         v = v.decode(e)
-    return v
+    return to_text(v)
 
 
 def hide_pw(ctx):
@@ -157,10 +157,7 @@ class LookupModule(LookupBase):
         single_attr = None
         value_spec = ctx.get('value')
         if value_spec is not None and not isinstance(value_spec, list):
-            # if isinstance(value_spec, str):
             value_spec = [value_spec]
-            # else:
-            #     value_spec = [value_spec.decode('utf8')]
 
         if value_spec is not None:
             for attr in value_spec:
@@ -173,7 +170,7 @@ class LookupModule(LookupBase):
                         attr_props[attr_name] = attr_prop_dict
 
             base_args['attrlist'] = \
-                [a.encode('ASCII') for a in attr_props
+                [to_text(a) for a in attr_props
                  if attr_props[a] is None
                  or not attr_props[a].get('skip', False)]
 
@@ -229,7 +226,6 @@ class LookupModule(LookupBase):
             self._display.vv('LDAP search, expanded: %s' % hide_pw(search_desc))
 
             # Perform search
-
             base = search_desc['base']
             scope = getattr(ldap, 'SCOPE_%s' % search_desc['scope'].upper())
             args = base_args.copy()
