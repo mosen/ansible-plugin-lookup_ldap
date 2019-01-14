@@ -15,7 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+from ansible.module_utils.six import string_types
+from ansible.module_utils._text import to_text
 
 from ansible import errors
 
@@ -154,7 +157,11 @@ class LookupModule(LookupBase):
         single_attr = None
         value_spec = ctx.get('value')
         if value_spec is not None and not isinstance(value_spec, list):
+            # if isinstance(value_spec, str):
             value_spec = [value_spec]
+            # else:
+            #     value_spec = [value_spec.decode('utf8')]
+
         if value_spec is not None:
             for attr in value_spec:
                 if not isinstance(attr, dict):
@@ -196,7 +203,7 @@ class LookupModule(LookupBase):
                 # bindpw may be an AnsibleVaultEncryptedUnicode, which ldap doesn't
                 # know anything about, so cast to unicode explicitly now.
 
-                lo.simple_bind_s(ctx.get('binddn', ''), unicode(ctx.get('bindpw', '')))
+                lo.simple_bind_s(ctx.get('binddn', ''), ctx.get('bindpw', ''))
 
         ret = []
 
@@ -277,7 +284,7 @@ class LookupModule(LookupBase):
 
     @staticmethod
     def get_ldap_constant_value(value_specifier, constant_name_prefix):
-        if isinstance(value_specifier, basestring):
+        if isinstance(value_specifier, string_types):
             return getattr(ldap, constant_name_prefix + value_specifier.upper())
         else:
             return value_specifier
