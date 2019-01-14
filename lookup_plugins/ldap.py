@@ -142,7 +142,7 @@ class LookupModule(LookupBase):
 
         try:
             ctx = self.render_template(variables, ctx)
-        except Exception, e:
+        except Exception as e:
             raise errors.AnsibleError(
                 'exception while preparing LDAP parameters: %s' % e)
         self._display.vv("LDAP config: %s" % hide_pw(ctx))
